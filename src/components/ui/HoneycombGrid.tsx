@@ -29,7 +29,7 @@ export default function HoneycombGrid({ items }: { items: HoneycombItem[] }) {
     const count = isFullRow ? ITEMS_PER_ROW : ITEMS_PER_ROW - 1
     const take = Math.min(count, items.length - idx)
     
-    const rowItems = items.slice(idx, idx + take).map(item => ({ item, id: item.id }))
+    const rowItems: { item: HoneycombItem | null; id: string }[] = items.slice(idx, idx + take).map(item => ({ item, id: item.id }))
     
     // Pad the rest of the row with null items so flex justify-center 
     // keeps the real items in the correct honeycomb offset positions

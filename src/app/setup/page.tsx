@@ -15,7 +15,7 @@ export default async function SetupPage() {
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 bg-brand-sun rounded-full flex items-center justify-center text-brand-navy font-bold text-2xl">AIP</div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-navy">
           Initial Setup
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">

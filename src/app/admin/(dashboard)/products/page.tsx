@@ -18,9 +18,14 @@ export default async function ProductsAdminPage() {
             <Package size={18} className="text-brand-sun" /> Manage all industrial products.
           </p>
         </div>
-        <Link href="/admin/products/new" className="bg-gradient-to-r from-brand-navy to-brand-navy-light hover:from-brand-sun hover:to-brand-sun-light text-white hover:text-brand-navy px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-          <Plus size={20} /> Add Product
-        </Link>
+        <div className="flex gap-4">
+          <Link href="/admin/products/bulk" className="bg-white border-2 border-brand-navy hover:bg-brand-navy text-brand-navy hover:text-white px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+            Bulk Add
+          </Link>
+          <Link href="/admin/products/new" className="bg-gradient-to-r from-brand-navy to-brand-navy-light hover:from-brand-sun hover:to-brand-sun-light text-white hover:text-brand-navy px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <Plus size={20} /> Add Product
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white overflow-hidden">

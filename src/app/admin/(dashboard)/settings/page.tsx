@@ -11,7 +11,7 @@ export default async function SettingsPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Site Settings</h1>
+        <h1 className="text-3xl font-bold text-brand-navy">Site Settings</h1>
         <p className="text-gray-500 mt-2">Manage contact details and global site preferences.</p>
       </div>
 

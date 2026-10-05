@@ -1,7 +1,18 @@
 import Link from "next/link"
 import { Phone, Mail, MapPin, ArrowRight } from "lucide-react"
+import prisma from "@/lib/prisma"
 
-export default function Footer() {
+export default async function Footer() {
+  const settingsDb = await prisma.setting.findMany()
+  const settings = settingsDb.reduce((acc, s) => {
+    acc[s.key] = s.value
+    return acc
+  }, {} as Record<string, string>)
+
+  const address = settings['ADDRESS'] || "Plot No 123, Phase 1, IDA Jeedimetla, Hyderabad, Telangana 500055"
+  const phone = settings['CONTACT_PHONE'] || "+91 98765 43210"
+  const email = settings['CONTACT_EMAIL'] || "sales@alfaindustrial.com"
+
   return (
     <footer className="bg-brand-navy text-gray-300 py-16 relative overflow-hidden">
       {/* Dynamic Background Elements */}
@@ -45,19 +56,19 @@ export default function Footer() {
                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-brand-sun/10 transition-colors">
                   <MapPin className="text-brand-sun" size={16} />
                 </div>
-                <span className="text-gray-400 text-sm leading-relaxed mt-1 font-medium">Plot No 123, Phase 1, IDA Jeedimetla, Hyderabad, Telangana 500055</span>
+                <span className="text-gray-400 text-sm leading-relaxed mt-1 font-medium">{address}</span>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-brand-sun/10 transition-colors">
                   <Phone className="text-brand-sun" size={16} />
                 </div>
-                <span className="text-gray-400 text-sm font-medium">+91 98765 43210</span>
+                <span className="text-gray-400 text-sm font-medium">{phone}</span>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-brand-sun/10 transition-colors">
                   <Mail className="text-brand-sun" size={16} />
                 </div>
-                <span className="text-gray-400 text-sm font-medium">sales@alfaindustrial.com</span>
+                <span className="text-gray-400 text-sm font-medium">{email}</span>
               </li>
             </ul>
           </div>

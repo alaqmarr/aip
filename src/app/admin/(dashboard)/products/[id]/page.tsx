@@ -22,7 +22,7 @@ export default async function EditProductPage({ params }: Props) {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <Link href="/admin/products" className="text-brand-sun hover:text-brand-sun-dark font-medium mb-2 inline-block">&larr; Back to Products</Link>
-          <h1 className="text-3xl font-bold text-gray-900">Edit Product: {product.name}</h1>
+          <h1 className="text-3xl font-bold text-brand-navy">Edit Product: {product.name}</h1>
         </div>
       </div>
       

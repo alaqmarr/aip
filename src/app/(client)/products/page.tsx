@@ -1,56 +1,66 @@
-import { Metadata } from "next"
-import prisma from "@/lib/prisma"
-import HoneycombGrid from "@/components/ui/HoneycombGrid"
-import PageHeader from "@/components/ui/PageHeader"
+import type { Metadata } from "next";
+import {
+  getAllProducts,
+  getAllCategories,
+  getSiteSettings,
+} from "@/lib/data";
+import { absoluteUrl, SITE_NAME } from "@/lib/site";
+import ProductsCatalogClient from "@/components/catalog/ProductsCatalogClient";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Products | Alfa Industrial Products",
-  description: "Explore our comprehensive range of industrial valves, pneumatic components, and hydraulic equipment.",
-}
-
-export const revalidate = 3600
+  title: "All Industrial Products & Hardware Catalog",
+  description:
+    "Browse stocked pneumatic cylinders, F.R.L. combinations, PU connectors, brass & SS fittings, industrial valves, and hydraulic hardware from Alfa Industrial Products in Ranigunj, Secunderabad.",
+  alternates: {
+    canonical: absoluteUrl("/products"),
+  },
+  openGraph: {
+    title: `All Industrial Products & Hardware Catalog | ${SITE_NAME}`,
+    description:
+      "Search and filter pneumatic products, brass & SS fittings, industrial valves, and hydraulic hardware in Secunderabad.",
+    url: absoluteUrl("/products"),
+    images: [{ url: "/hero-industrial.jpg", width: 1200, height: 630 }],
+  },
+};
 
 export default async function ProductsPage() {
-  const products = await prisma.product.findMany({
-    include: { category: true },
-    orderBy: { createdAt: 'desc' }
-  })
+  const [allProducts, categories, settings] = await Promise.all([
+    getAllProducts(),
+    getAllCategories(),
+    getSiteSettings(),
+  ]);
 
-  const items = products.map(p => {
-    let previewImage = null
-    if (p.images) {
-      try {
-        const parsed = JSON.parse(p.images)
-        previewImage = parsed.length > 0 ? parsed[0] : null
-      } catch (e) {
-        // ignore
-      }
-    }
-    return {
-      id: p.id,
-      title: p.name,
-      href: `/products/${p.slug}`,
-      image: previewImage
-    }
-  })
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Industrial Products Catalog | Alfa Industrial Products",
+    url: absoluteUrl("/products"),
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: allProducts.length,
+      itemListElement: allProducts.slice(0, 30).map((prod, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        url: absoluteUrl(`/products/${prod.slug}`),
+        name: prod.name,
+      })),
+    },
+  };
 
   return (
-    <div className="bg-white min-h-[80vh] relative overflow-hidden">
-      <PageHeader 
-        badge="All Products"
-        title="Our Products."
-        description="Explore our comprehensive range of industrial valves, pneumatic components, and hydraulic equipment."
+    <div className="w-full bg-brand-surface bg-honeycomb-light">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pb-24">
-        {items.length > 0 ? (
-          <HoneycombGrid items={items} />
-        ) : (
-          <div className="text-center text-gray-500 py-16 bg-white rounded-3xl border border-gray-100 shadow-sm">
-            No products available yet. Please check back later.
-          </div>
-        )}
-      </div>
+      <ProductsCatalogClient
+        allProducts={allProducts}
+        categories={categories}
+        whatsappNumber={settings.whatsapp}
+      />
     </div>
-  )
+  );
 }

@@ -1,62 +1,78 @@
-"use client"
-import { useState } from "react"
-import { saveCategory } from "./actions"
-import FileUpload from "@/components/ui/FileUpload"
+"use client";
 
-import toast from "react-hot-toast"
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { saveCategory } from "./actions";
+import FileUpload from "@/components/ui/FileUpload";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 interface CategoryFormProps {
   category?: {
-    id: string
-    name: string
-    description?: string | null
-    image?: string | null
-  }
+    id: string;
+    name: string;
+    description?: string | null;
+    image?: string | null;
+  };
 }
 
 export default function CategoryForm({ category }: CategoryFormProps) {
-  const [image, setImage] = useState(category?.image || "")
+  const [image, setImage] = useState(category?.image || "");
 
   const handleSubmit = async (formData: FormData) => {
-    const res = await saveCategory(formData)
-    if (res?.error) toast.error(res.error)
-  }
+    const res = await saveCategory(formData);
+    if (res?.error) toast.error(res.error);
+  };
 
   return (
     <form action={handleSubmit} className="space-y-6">
       {category && <input type="hidden" name="id" value={category.id} />}
       <input type="hidden" name="image" value={image} />
-      
+
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-        <input 
-          name="name" 
-          defaultValue={category?.name} 
-          required 
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-sun focus:border-brand-sun outline-none" 
+        <label className="block font-mono text-xs uppercase tracking-wider text-brand-navy mb-1.5">
+          Category Name *
+        </label>
+        <input
+          name="name"
+          defaultValue={category?.name}
+          required
+          placeholder="e.g. Ball Valves, Pneumatic Fittings..."
+          className="w-full h-11 px-3.5 bg-brand-surface border border-brand-line text-sm text-brand-navy focus:outline-none focus:border-brand-navy focus:bg-white"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-        <textarea 
-          name="description" 
-          defaultValue={category?.description || ""} 
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-sun focus:border-brand-sun outline-none resize-none" 
+        <label className="block font-mono text-xs uppercase tracking-wider text-brand-navy mb-1.5">
+          Plain Description
+        </label>
+        <textarea
+          name="description"
+          defaultValue={category?.description || ""}
           rows={3}
+          placeholder="Briefly describe what types of products belong in this category..."
+          className="w-full p-3.5 bg-brand-surface border border-brand-line text-sm text-brand-navy focus:outline-none focus:border-brand-navy focus:bg-white resize-y"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Category Image</label>
-        <FileUpload onUploadSuccess={(url) => setImage(url)} currentImage={image} />
+        <label className="block font-mono text-xs uppercase tracking-wider text-brand-navy mb-1.5">
+          Category Cover Image
+        </label>
+        <FileUpload
+          onUploadSuccess={(url) => setImage(url)}
+          currentImage={image}
+        />
       </div>
 
-      <div className="flex justify-end pt-4">
-        <button type="submit" className="bg-brand-navy hover:bg-brand-navy-light text-white px-6 py-2 rounded-md font-medium transition-colors">
+      <div className="pt-2">
+        <SubmitButton
+          pendingLabel={category ? "Updating category..." : "Creating category..."}
+          loaderTone="light"
+          className="bg-brand-navy hover:bg-brand-navy-light text-white font-display font-bold text-xs uppercase tracking-wider px-7 py-3.5"
+        >
           {category ? "Update Category" : "Create Category"}
-        </button>
+        </SubmitButton>
       </div>
     </form>
-  )
+  );
 }

@@ -1,71 +1,118 @@
-import prisma from "@/lib/prisma"
-import Link from "next/link"
-import { Plus, Edit, Trash2, Package } from "lucide-react"
-import { deleteProduct } from "./actions"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Plus, Edit, Trash2, FileSpreadsheet } from "lucide-react";
+import prisma from "@/lib/prisma";
+import { deleteProduct } from "./actions";
+import SubmitButton from "@/components/ui/SubmitButton";
+
+export const metadata: Metadata = {
+  title: "Manage Products",
+};
 
 export default async function ProductsAdminPage() {
   const products = await prisma.product.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: { category: true }
-  })
+    orderBy: { createdAt: "desc" },
+    include: { category: true },
+  });
 
   return (
-    <div className="p-8 lg:p-12 max-w-7xl mx-auto">
-      <div className="flex justify-between items-end mb-10">
+    <div className="w-full">
+      <div className="w-full bg-white border-b border-brand-line px-6 sm:px-10 py-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-brand-navy tracking-tight">Products.</h1>
-          <p className="text-gray-500 mt-2 font-medium flex items-center gap-2">
-            <Package size={18} className="text-brand-sun" /> Manage all industrial products.
-          </p>
+          <div className="font-mono text-xs uppercase tracking-widest text-brand-steel mb-1">
+            Stocked Items
+          </div>
+          <h1 className="text-3xl font-display font-bold text-brand-navy">
+            All Listed Products
+          </h1>
         </div>
-        <div className="flex gap-4">
-          <Link href="/admin/products/bulk" className="bg-white border-2 border-brand-navy hover:bg-brand-navy text-brand-navy hover:text-white px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
-            Bulk Add
+
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/admin/products/bulk"
+            className="rounded-lg border border-brand-navy text-brand-navy hover:bg-brand-surface font-display text-xs font-bold uppercase tracking-wider px-5 py-3.5 inline-flex items-center gap-2 transition-colors"
+          >
+            <FileSpreadsheet size={15} />
+            <span>Bulk Import</span>
           </Link>
-          <Link href="/admin/products/new" className="bg-gradient-to-r from-brand-navy to-brand-navy-light hover:from-brand-sun hover:to-brand-sun-light text-white hover:text-brand-navy px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <Plus size={20} /> Add Product
+          <Link
+            href="/admin/products/new"
+            className="rounded-lg bg-brand-sun hover:bg-brand-sun-light text-brand-navy font-display text-xs font-bold uppercase tracking-wider px-6 py-3.5 inline-flex items-center gap-2 transition-colors"
+          >
+            <Plus size={16} />
+            <span>Add Product</span>
           </Link>
         </div>
       </div>
 
-      <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-50/50 border-b border-gray-100 text-sm font-bold text-gray-500 uppercase tracking-wider">
-              <th className="p-6">Name</th>
-              <th className="p-6">Category</th>
-              <th className="p-6">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50 text-sm">
-            {products.map(product => (
-              <tr key={product.id} className="hover:bg-brand-sun/5 transition-colors group">
-                <td className="p-6 font-bold text-brand-navy text-base">{product.name}</td>
-                <td className="p-6 text-brand-navy font-semibold">
-                  <span className="bg-gray-100 text-brand-navy px-3 py-1 rounded-full text-xs group-hover:bg-brand-sun group-hover:text-white transition-colors">{product.category.name}</span>
-                </td>
-                <td className="p-6 flex gap-4">
-                  <Link href={`/admin/products/${product.id}`} className="text-gray-400 hover:text-brand-navy transition-colors bg-white p-2 rounded-lg shadow-sm border border-gray-100 hover:border-brand-navy">
-                    <Edit size={18} />
-                  </Link>
-                  <form action={deleteProduct.bind(null, product.id) as any}>
-                    <button type="submit" className="text-gray-400 hover:text-red-500 transition-colors bg-white p-2 rounded-lg shadow-sm border border-gray-100 hover:border-red-200">
-                      <Trash2 size={18} />
-                    </button>
-                  </form>
-                </td>
+      <div className="w-full p-6 sm:p-10">
+        <div className="w-full rounded-xl bg-white border border-brand-line overflow-x-auto shadow-xs">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-brand-surface border-b border-brand-line font-mono text-xs text-brand-steel uppercase tracking-wider">
+                <th className="p-4 sm:p-5">Product Name</th>
+                <th className="p-4 sm:p-5">Category</th>
+                <th className="p-4 sm:p-5">URL</th>
+                <th className="p-4 sm:p-5 text-right">Actions</th>
               </tr>
-            ))}
-            {products.length === 0 && (
-              <tr>
-                <td colSpan={3} className="p-12 text-center text-gray-400 font-medium">
-                  No products found. Start by adding one!
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-brand-line text-sm">
+              {products.map((product) => (
+                <tr
+                  key={product.id}
+                  className="hover:bg-brand-surface/50 transition-colors"
+                >
+                  <td className="p-4 sm:p-5 font-display font-bold text-brand-navy">
+                    {product.name}
+                  </td>
+                  <td className="p-4 sm:p-5">
+                    <span className="rounded-md bg-brand-surface-alt border border-brand-line text-brand-navy px-2.5 py-1 font-mono text-xs">
+                      {product.category.name}
+                    </span>
+                  </td>
+                  <td className="p-4 sm:p-5 font-mono text-xs text-brand-muted">
+                    /products/{product.slug}
+                  </td>
+                  <td className="p-4 sm:p-5">
+                    <div className="flex items-center justify-end gap-2">
+                      <Link
+                        href={`/admin/products/${product.id}`}
+                        className="rounded-md border border-brand-line hover:border-brand-navy bg-white text-brand-navy p-2 transition-colors"
+                        title="Edit product"
+                      >
+                        <Edit size={16} />
+                      </Link>
+                      <form
+                        action={deleteProduct.bind(null, product.id) as any}
+                      >
+                        <SubmitButton
+                          pendingLabel="..."
+                          loaderTone="navy"
+                          className="rounded-md border border-brand-line hover:border-red-500 bg-white text-brand-muted hover:text-red-600 p-2"
+                          title="Delete product"
+                        >
+                          <Trash2 size={16} />
+                        </SubmitButton>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {products.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="p-12 text-center text-brand-muted text-sm"
+                  >
+                    No products found yet. Click Add Product or Bulk Import to
+                    start listing stock.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  )
+  );
 }

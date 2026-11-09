@@ -1,60 +1,111 @@
-import prisma from "@/lib/prisma"
-import { redirect } from "next/navigation"
-import { createAdminUser } from "./actions"
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import prisma from "@/lib/prisma";
+import { createAdminUser } from "./actions";
+import SubmitButton from "@/components/ui/SubmitButton";
+
+export const metadata: Metadata = {
+  title: "Initial Account Setup",
+  description: "Create the initial staff account for Alfa Industrial Products.",
+  robots: { index: false, follow: false },
+};
 
 export default async function SetupPage() {
-  const userCount = await prisma.user.count()
+  const userCount = await prisma.user.count();
 
   if (userCount > 0) {
-    redirect("/")
+    redirect("/");
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-brand-sun rounded-full flex items-center justify-center text-brand-navy font-bold text-2xl">AIP</div>
+    <div className="min-h-screen w-full bg-brand-navy bg-honeycomb-navy flex items-center justify-center p-6">
+      <div className="w-full max-w-md rounded-2xl bg-white border border-brand-line p-8 sm:p-10 shadow-sm">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-11 w-11 border border-brand-line p-1 flex items-center justify-center">
+            <img
+              src="/logo.jpeg"
+              alt="Alfa Industrial Products"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div>
+            <div className="font-display font-bold text-lg text-brand-navy leading-none">
+              ALFA INDUSTRIAL
+            </div>
+            <div className="font-mono text-[11px] uppercase tracking-wider text-brand-steel mt-1">
+              First-Time Setup
+            </div>
+          </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-navy">
-          Initial Setup
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Create the first administrator account. This page will be disabled afterwards.
+
+        <h1 className="text-2xl font-display font-bold text-brand-navy mb-2">
+          Create Staff Account
+        </h1>
+        <p className="text-sm text-brand-muted mb-6">
+          Set up the primary administrator login. This page locks automatically
+          once created.
         </p>
-      </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-200">
-          <form action={createAdminUser as any} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-              <div className="mt-1">
-                <input id="name" name="name" type="text" required className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-sun focus:border-brand-sun sm:text-sm" />
-              </div>
-            </div>
+        <form action={createAdminUser as any} className="space-y-5">
+          <div>
+            <label
+              htmlFor="name"
+              className="block font-mono text-xs uppercase tracking-wider text-brand-navy mb-1.5"
+            >
+              Full Name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              className="block w-full h-11 px-3.5 bg-brand-surface border border-brand-line text-sm text-brand-navy focus:outline-none focus:border-brand-navy focus:bg-white"
+            />
+          </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
-              <div className="mt-1">
-                <input id="email" name="email" type="email" autoComplete="email" required className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-sun focus:border-brand-sun sm:text-sm" />
-              </div>
-            </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="block font-mono text-xs uppercase tracking-wider text-brand-navy mb-1.5"
+            >
+              Email Address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="block w-full h-11 px-3.5 bg-brand-surface border border-brand-line text-sm text-brand-navy focus:outline-none focus:border-brand-navy focus:bg-white"
+            />
+          </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-              <div className="mt-1">
-                <input id="password" name="password" type="password" autoComplete="new-password" required className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-sun focus:border-brand-sun sm:text-sm" />
-              </div>
-            </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="block font-mono text-xs uppercase tracking-wider text-brand-navy mb-1.5"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              required
+              className="block w-full h-11 px-3.5 bg-brand-surface border border-brand-line text-sm text-brand-navy focus:outline-none focus:border-brand-navy focus:bg-white"
+            />
+          </div>
 
-            <div>
-              <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-navy hover:bg-brand-navy-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-sun">
-                Create Admin Account
-              </button>
-            </div>
-          </form>
-        </div>
+          <SubmitButton
+            pendingLabel="Creating account..."
+            loaderTone="light"
+            className="w-full h-12 bg-brand-navy hover:bg-brand-navy-light text-white font-display font-bold text-xs uppercase tracking-wider"
+          >
+            Create Administrator
+          </SubmitButton>
+        </form>
       </div>
     </div>
-  )
+  );
 }

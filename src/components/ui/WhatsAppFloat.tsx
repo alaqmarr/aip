@@ -1,61 +1,56 @@
-"use client"
-import { MessageCircle } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect } from "react"
+"use client";
+
+import { useState, useEffect } from "react";
+import { buildWhatsAppLink } from "@/lib/site";
+import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 
 interface WhatsAppFloatProps {
-  phoneNumber: string
-  productName?: string
+  phoneNumber: string;
+  productName?: string;
 }
 
-export default function WhatsAppFloat({ phoneNumber, productName }: WhatsAppFloatProps) {
-  const [isVisible, setIsVisible] = useState(false)
+export default function WhatsAppFloat({
+  phoneNumber,
+  productName,
+}: WhatsAppFloatProps) {
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Show after scrolling down a bit
     const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true)
-      } else {
-        setIsVisible(false)
-      }
-    }
-    
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsVisible(window.scrollY > 220);
+    };
 
-  const defaultMessage = productName 
-    ? `Hello Alfa Industrial Products, I am interested in inquiring about ${productName}. Could you provide more details?`
-    : `Hello Alfa Industrial Products, I have an inquiry.`
-    
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(defaultMessage)}`
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const message = productName
+    ? `Hello Alfa Industrial Products, I want to check price and stock for ${productName}.`
+    : "Hello Alfa Industrial Products, I need a quote for industrial products.";
+
+  const whatsappUrl = buildWhatsAppLink(phoneNumber, message);
+
+  if (!isVisible) return null;
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2"
-        >
-          {productName && (
-            <div className="bg-white px-4 py-2 rounded-full shadow-lg border border-gray-100 text-sm font-medium text-gray-700 max-w-[200px] truncate">
-              Inquire about {productName}
-            </div>
-          )}
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-[#25D366] text-white p-4 rounded-full shadow-xl hover:bg-[#20bd5a] hover:scale-110 transition-all flex items-center justify-center relative overflow-hidden group"
-          >
-            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
-            <MessageCircle size={32} />
-          </a>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  )
+    <div className="fixed bottom-6 right-6 z-40">
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={
+          productName
+            ? `WhatsApp inquiry for ${productName}`
+            : "Chat with sales on WhatsApp"
+        }
+        className="inline-flex items-center gap-3 rounded-full bg-whatsapp hover:bg-whatsapp-dark text-white pl-4 pr-5 py-3.5 shadow-[0_10px_28px_rgba(31,168,85,0.35)] hover:-translate-y-0.5 transition-all duration-200"
+      >
+        <WhatsAppIcon size={22} />
+        <span className="font-display text-sm font-semibold tracking-tight max-w-[190px] truncate">
+          {productName ? `Ask about ${productName}` : "WhatsApp Sales"}
+        </span>
+      </a>
+    </div>
+  );
 }

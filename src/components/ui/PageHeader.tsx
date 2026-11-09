@@ -1,35 +1,67 @@
-import React from "react"
+import React from "react";
+import Link from "next/link";
 
-interface PageHeaderProps {
-  badge?: string;
-  title: React.ReactNode;
-  description?: string;
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
 }
 
-export default function PageHeader({ badge, title, description }: PageHeaderProps) {
+interface PageHeaderProps {
+  breadcrumbs: BreadcrumbItem[];
+  title: string;
+  description: string;
+  metaRight?: React.ReactNode;
+}
+
+export default function PageHeader({
+  breadcrumbs,
+  title,
+  description,
+  metaRight,
+}: PageHeaderProps) {
   return (
-    <div className="relative pt-40 pb-16 overflow-hidden bg-white">
-      {/* Large subtle background honeycombs */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-sun/5 clip-honeycomb blur-3xl -mt-32 -mr-32 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-navy/5 clip-honeycomb blur-3xl -mb-32 -ml-32 pointer-events-none"></div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-2xl text-center mx-auto">
-          {badge && (
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-sun/10 text-brand-sun text-xs font-bold tracking-wider uppercase mb-4 border border-brand-sun/20">
-              {badge}
-            </div>
-          )}
-          <h1 className="text-4xl md:text-6xl font-extrabold text-brand-navy mb-6 tracking-tight">
-            {title}
-          </h1>
-          {description && (
-            <p className="text-lg text-gray-500">
+    <header className="w-full bg-brand-navy bg-honeycomb-navy border-b border-brand-line-dark text-white">
+      <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20 2xl:px-24 py-16 sm:py-20 lg:py-24">
+        {/* Breadcrumb Row */}
+        <nav
+          aria-label="Breadcrumb"
+          className="flex flex-wrap items-center gap-2.5 font-mono text-xs uppercase tracking-wider text-blue-200/80 mb-6"
+        >
+          {breadcrumbs.map((crumb, idx) => (
+            <React.Fragment key={idx}>
+              {idx > 0 && <span className="text-brand-sun/70">/</span>}
+              {crumb.href ? (
+                <Link
+                  href={crumb.href}
+                  className="hover:text-brand-sun transition-colors"
+                >
+                  {crumb.label}
+                </Link>
+              ) : (
+                <span className="text-brand-sun font-medium">{crumb.label}</span>
+              )}
+            </React.Fragment>
+          ))}
+        </nav>
+
+        {/* Main Header Split */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+          <div className="lg:col-span-8">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-bold tracking-tight text-white leading-[1.1]">
+              {title}
+            </h1>
+            <p className="mt-5 text-base sm:text-lg text-blue-100/85 max-w-3xl leading-relaxed">
               {description}
             </p>
+          </div>
+
+          {metaRight && (
+            <div className="lg:col-span-4 lg:flex lg:justify-end">
+              {metaRight}
+            </div>
           )}
         </div>
       </div>
-    </div>
-  )
+    </header>
+  );
 }

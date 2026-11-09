@@ -1,106 +1,249 @@
-import Link from "next/link"
-import { Phone, Mail, MapPin, ArrowRight } from "lucide-react"
-import prisma from "@/lib/prisma"
+import Link from "next/link";
+import { Phone, Mail, MapPin, Clock, ArrowUpRight } from "lucide-react";
+import { getSiteSettings, getAllCategories } from "@/lib/data";
+import {
+  buildWhatsAppLink,
+  COMPANY_GSTIN,
+  COMPANY_HOURS,
+  COMPANY_LANDLINE,
+  VERIFIED_PROFILES,
+} from "@/lib/site";
+import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 
 export default async function Footer() {
-  const settingsDb = await prisma.setting.findMany()
-  const settings = settingsDb.reduce((acc, s) => {
-    acc[s.key] = s.value
-    return acc
-  }, {} as Record<string, string>)
+  const [settings, categories] = await Promise.all([
+    getSiteSettings(),
+    getAllCategories(),
+  ]);
 
-  const address = settings['ADDRESS'] || "Plot No 123, Phase 1, IDA Jeedimetla, Hyderabad, Telangana 500055"
-  const phone = settings['CONTACT_PHONE'] || "+91 98765 43210"
-  const email = settings['CONTACT_EMAIL'] || "sales@alfaindustrial.com"
+  const whatsappUrl = buildWhatsAppLink(
+    settings.whatsapp,
+    "Hello Alfa Industrial Products, I have an inquiry regarding your pneumatic, fitting, or valve products."
+  );
 
   return (
-    <footer className="bg-brand-navy text-gray-300 py-16 relative overflow-hidden">
-      {/* Dynamic Background Elements */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-sun/5 clip-honeycomb -mt-32 -mr-32 pointer-events-none blur-xl"></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand-navy-light/40 clip-honeycomb -mb-40 -ml-40 pointer-events-none blur-3xl"></div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
-          <div className="lg:col-span-4">
-            <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
-              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-white/10 group-hover:scale-105 transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                <span className="text-brand-navy font-black text-xl">A</span>
+    <footer className="w-full bg-brand-navy bg-honeycomb-navy text-blue-100 border-t border-brand-line-dark">
+      {/* Main Footer Grid with 8pt Macro Padding & Gutters */}
+      <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20 2xl:px-24 py-16 sm:py-20 lg:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
+          {/* Column 1: Verified Company Info */}
+          <div className="lg:col-span-4 space-y-6">
+            <Link href="/" className="inline-flex items-center gap-3.5">
+              <div className="h-12 w-12 rounded-lg bg-white p-1 flex items-center justify-center shrink-0">
+                <img
+                  src="/logo.jpeg"
+                  alt="Alfa Industrial Products"
+                  width={44}
+                  height={44}
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tight leading-none text-white">Alfa Industrial</span>
-                <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1 text-brand-sun">Products</span>
+              <div>
+                <div className="font-display font-bold text-xl text-white leading-none">
+                  ALFA INDUSTRIAL
+                </div>
+                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-sun mt-1">
+                  Products &amp; Supply
+                </div>
               </div>
             </Link>
-            <p className="text-sm leading-relaxed mb-6 pr-4 text-gray-400 font-medium">
-              Registered in 2014, Alfa Industrial Products has established a formidable legacy as a premium supplier of industrial components. Excellence engineered into every part.
+
+            <p className="text-sm text-blue-100/85 leading-relaxed max-w-md">
+              Wholesale trader, distributor, and supplier of pneumatic cylinders,
+              F.R.L. combinations, PU connectors, brass &amp; stainless steel
+              fittings, industrial valves, and hydraulic hardware in Ranigunj,
+              Secunderabad.
             </p>
-          </div>
-          
 
-          {/* Links Column */}
-          <div className="lg:col-span-2 lg:col-start-6">
-            <h4 className="text-white font-bold mb-6 tracking-widest uppercase text-xs">Quick Links</h4>
-            <ul className="space-y-4">
-              <li><Link href="/about" className="text-gray-400 hover:text-brand-sun transition-colors text-sm font-medium flex items-center gap-2 group"><ArrowRight size={12} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all"/> About Us</Link></li>
-              <li><Link href="/categories" className="text-gray-400 hover:text-brand-sun transition-colors text-sm font-medium flex items-center gap-2 group"><ArrowRight size={12} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all"/> Categories</Link></li>
-              <li><Link href="/products" className="text-gray-400 hover:text-brand-sun transition-colors text-sm font-medium flex items-center gap-2 group"><ArrowRight size={12} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all"/> All Products</Link></li>
-              <li><Link href="/admin/login" className="text-gray-400 hover:text-brand-sun transition-colors text-sm font-medium flex items-center gap-2 group"><ArrowRight size={12} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all"/> Partner Login</Link></li>
+            <div className="font-mono text-xs text-blue-200/80 space-y-1">
+              <div>GSTIN: {COMPANY_GSTIN}</div>
+              <div className="inline-flex items-center gap-2">
+                <Clock size={13} className="text-brand-sun" />
+                <span>{COMPANY_HOURS}</span>
+              </div>
+            </div>
+
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 rounded-lg bg-whatsapp hover:bg-whatsapp-dark text-white font-display font-bold text-xs uppercase tracking-wider px-5 py-3.5 transition-colors"
+            >
+              <WhatsAppIcon size={18} />
+              <span>Chat on WhatsApp</span>
+            </a>
+          </div>
+
+          {/* Column 2: Navigation */}
+          <div className="lg:col-span-2">
+            <h2 className="font-mono text-xs uppercase tracking-widest text-brand-sun mb-6">
+              Navigation
+            </h2>
+            <ul className="space-y-3.5 text-sm">
+              <li>
+                <Link
+                  href="/"
+                  className="text-blue-100/80 hover:text-white transition-colors"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products"
+                  className="text-blue-100/80 hover:text-white transition-colors"
+                >
+                  All Products
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/categories"
+                  className="text-blue-100/80 hover:text-white transition-colors"
+                >
+                  Product Categories
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about"
+                  className="text-blue-100/80 hover:text-white transition-colors"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-blue-100/80 hover:text-white transition-colors"
+                >
+                  Request a Quote
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/admin/login"
+                  className="text-blue-200/60 hover:text-brand-sun transition-colors text-xs font-mono"
+                >
+                  Staff Portal
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Contact Column */}
+          {/* Column 3: Dynamic Categories from DB */}
           <div className="lg:col-span-3">
-            <h4 className="text-white font-bold mb-6 tracking-widest uppercase text-xs">Contact Us</h4>
-            <ul className="space-y-5">
-              <li className="flex items-start gap-3 group">
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-brand-sun/10 transition-colors">
-                  <MapPin className="text-brand-sun" size={16} />
-                </div>
-                <span className="text-gray-400 text-sm leading-relaxed mt-1 font-medium">{address}</span>
-              </li>
-              <li className="flex items-center gap-3 group">
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-brand-sun/10 transition-colors">
-                  <Phone className="text-brand-sun" size={16} />
-                </div>
-                <span className="text-gray-400 text-sm font-medium">{phone}</span>
-              </li>
-              <li className="flex items-center gap-3 group">
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-brand-sun/10 transition-colors">
-                  <Mail className="text-brand-sun" size={16} />
-                </div>
-                <span className="text-gray-400 text-sm font-medium">{email}</span>
-              </li>
-            </ul>
+            <h2 className="font-mono text-xs uppercase tracking-widest text-brand-sun mb-6">
+              Product Categories
+            </h2>
+            {categories.length > 0 ? (
+              <ul className="space-y-3.5 text-sm">
+                {categories.slice(0, 6).map((cat) => (
+                  <li key={cat.id}>
+                    <Link
+                      href={`/categories/${cat.slug}`}
+                      className="text-blue-100/80 hover:text-white transition-colors inline-flex items-center justify-between w-full gap-3"
+                    >
+                      <span className="truncate">{cat.name}</span>
+                      <span className="font-mono text-xs text-blue-300/65 shrink-0">
+                        ({cat.productCount})
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-blue-200/65 leading-relaxed">
+                Browse our full catalog on the products page for current stock.
+              </p>
+            )}
           </div>
 
-          {/* Newsletter Column */}
+          {/* Column 4: Database-Controlled Contact Details */}
           <div className="lg:col-span-3">
-            <h4 className="text-white font-bold mb-6 tracking-widest uppercase text-xs">Stay Updated</h4>
-            <p className="text-gray-400 text-sm mb-4 font-medium">Subscribe to our newsletter for product updates and industry news.</p>
-            <div className="flex rounded-xl overflow-hidden border border-white/10 focus-within:border-brand-sun/50 transition-colors bg-white/5 backdrop-blur-md">
-              <input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="bg-transparent border-none text-white px-4 py-3.5 focus:outline-none w-full text-sm placeholder:text-gray-500"
-              />
-              <button className="bg-brand-sun hover:bg-brand-sun-light text-brand-navy px-5 transition-colors font-bold flex items-center justify-center shrink-0">
-                <ArrowRight size={18} />
-              </button>
+            <h2 className="font-mono text-xs uppercase tracking-widest text-brand-sun mb-6">
+              Ranigunj Store Contact
+            </h2>
+            <ul className="space-y-4 text-sm">
+              <li className="flex items-start gap-3">
+                <MapPin size={18} className="text-brand-sun shrink-0 mt-0.5" />
+                <span className="text-blue-100/85 leading-relaxed">
+                  {settings.address}
+                </span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone size={18} className="text-brand-sun shrink-0" />
+                <div className="font-mono text-blue-100/90 space-x-2">
+                  <a
+                    href={`tel:${settings.phone.replace(/\s+/g, "")}`}
+                    className="hover:text-brand-sun transition-colors"
+                  >
+                    {settings.phone}
+                  </a>
+                  <span className="text-blue-300/50">/</span>
+                  <a
+                    href={`tel:${COMPANY_LANDLINE.replace(/[^0-9+]/g, "")}`}
+                    className="hover:text-brand-sun transition-colors"
+                  >
+                    {COMPANY_LANDLINE}
+                  </a>
+                </div>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail size={18} className="text-brand-sun shrink-0" />
+                <a
+                  href={`mailto:${settings.email}`}
+                  className="text-blue-100/90 hover:text-brand-sun transition-colors break-all"
+                >
+                  {settings.email}
+                </a>
+              </li>
+            </ul>
+
+            <div className="mt-6 pt-6 border-t border-brand-line-dark">
+              <div className="font-mono text-[11px] uppercase tracking-wider text-blue-200/70 mb-2.5">
+                Verified Directory Listings
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs font-mono">
+                {VERIFIED_PROFILES.map((profile) => (
+                  <a
+                    key={profile.label}
+                    href={profile.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-brand-sun hover:text-brand-sun-light inline-flex items-center gap-1"
+                  >
+                    <span>{profile.label}</span>
+                    <ArrowUpRight size={12} />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-500 text-sm font-medium">
-            &copy; {new Date().getFullYear()} Alfa Industrial Products. All rights reserved.
-          </p>
-          <div className="flex space-x-6 text-sm font-medium text-gray-500">
-            <Link href="#" className="hover:text-brand-sun hover:bg-brand-sun/10 px-3 py-1 rounded-full transition-all">Privacy Policy</Link>
-            <Link href="#" className="hover:text-brand-sun hover:bg-brand-sun/10 px-3 py-1 rounded-full transition-all">Terms of Service</Link>
-          </div>
+      {/* Bottom Legal & Sitemap Strip */}
+      <div className="w-full border-t border-brand-line-dark px-6 sm:px-10 lg:px-16 xl:px-20 2xl:px-24 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-blue-200/65 font-mono">
+        <p>
+          &copy; {new Date().getFullYear()} Alfa Industrial Products. Ranigunj,
+          Secunderabad, Telangana 500003.
+        </p>
+        <div className="flex items-center gap-6">
+          <Link
+            href="/sitemap.xml"
+            className="hover:text-brand-sun transition-colors"
+          >
+            Sitemap
+          </Link>
+          <Link
+            href="/contact"
+            className="hover:text-brand-sun transition-colors"
+          >
+            Contact Store
+          </Link>
         </div>
       </div>
     </footer>
-  )
+  );
 }

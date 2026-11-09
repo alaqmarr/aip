@@ -1,77 +1,163 @@
-import prisma from "@/lib/prisma"
-import Link from "next/link"
-import { Users, Layers, Package, Settings, Plus, Hexagon } from "lucide-react"
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  Plus,
+  Layers,
+  Package,
+  Settings,
+  Users,
+  ArrowUpRight,
+  FileSpreadsheet,
+} from "lucide-react";
+import prisma from "@/lib/prisma";
+
+export const metadata: Metadata = {
+  title: "Dashboard Overview",
+};
 
 export default async function AdminDashboardPage() {
-  const categoriesCount = await prisma.category.count()
-  const productsCount = await prisma.product.count()
-  const usersCount = await prisma.user.count()
+  const [categoriesCount, productsCount, usersCount] = await Promise.all([
+    prisma.category.count(),
+    prisma.product.count(),
+    prisma.user.count(),
+  ]);
 
   return (
-    <div className="p-8 lg:p-12 max-w-7xl mx-auto">
-      <div className="mb-10 flex justify-between items-end">
+    <div className="w-full">
+      {/* Header Bar */}
+      <div className="w-full bg-white border-b border-brand-line px-6 sm:px-10 py-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-brand-navy tracking-tight">Dashboard.</h1>
-          <p className="text-gray-500 mt-2 font-medium">Welcome to the Alfa Industrial Products administration panel.</p>
+          <div className="font-mono text-xs uppercase tracking-widest text-brand-steel mb-1">
+            Inventory Console
+          </div>
+          <h1 className="text-3xl font-display font-bold text-brand-navy">
+            Catalog Overview
+          </h1>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/admin/products/bulk"
+            className="rounded-lg border border-brand-navy text-brand-navy hover:bg-brand-surface font-display text-xs font-bold uppercase tracking-wider px-5 py-3 inline-flex items-center gap-2 transition-colors"
+          >
+            <FileSpreadsheet size={15} />
+            <span>Bulk Add Products</span>
+          </Link>
+          <Link
+            href="/admin/products/new"
+            className="rounded-lg bg-brand-sun hover:bg-brand-sun-light text-brand-navy font-display text-xs font-bold uppercase tracking-wider px-5 py-3 inline-flex items-center gap-2 transition-colors"
+          >
+            <Plus size={15} />
+            <span>Add Single Product</span>
+          </Link>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {/* Categories Card */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-8 flex flex-col relative overflow-hidden group hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-brand-sun/10 clip-honeycomb group-hover:scale-110 transition-transform duration-500"></div>
-          <div className="w-14 h-14 bg-brand-sun text-brand-navy rounded-2xl flex items-center justify-center shrink-0 mb-6 shadow-md relative z-10">
-            <Layers size={28} />
+      {/* Metrics Cards & Quick Shortcuts */}
+      <div className="w-full p-6 sm:p-10 space-y-10">
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="rounded-xl bg-white border border-brand-line p-6 sm:p-8 flex items-start justify-between shadow-xs">
+            <div>
+              <div className="font-mono text-xs uppercase tracking-wider text-brand-muted">
+                Listed Products
+              </div>
+              <div className="font-display text-4xl font-bold text-brand-navy mt-2">
+                {productsCount}
+              </div>
+            </div>
+            <div className="w-11 h-11 rounded-lg bg-brand-navy text-brand-sun flex items-center justify-center">
+              <Package size={22} />
+            </div>
           </div>
-          <div className="relative z-10">
-            <p className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-1">Categories</p>
-            <h3 className="text-5xl font-black text-brand-navy">{categoriesCount}</h3>
+
+          <div className="rounded-xl bg-white border border-brand-line p-6 sm:p-8 flex items-start justify-between shadow-xs">
+            <div>
+              <div className="font-mono text-xs uppercase tracking-wider text-brand-muted">
+                Product Categories
+              </div>
+              <div className="font-display text-4xl font-bold text-brand-navy mt-2">
+                {categoriesCount}
+              </div>
+            </div>
+            <div className="w-11 h-11 rounded-lg bg-brand-sun text-brand-navy flex items-center justify-center">
+              <Layers size={22} />
+            </div>
           </div>
-        </div>
-        
-        {/* Products Card */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-8 flex flex-col relative overflow-hidden group hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-brand-navy/5 clip-honeycomb group-hover:scale-110 transition-transform duration-500"></div>
-          <div className="w-14 h-14 bg-brand-navy text-white rounded-2xl flex items-center justify-center shrink-0 mb-6 shadow-md relative z-10">
-            <Package size={28} />
-          </div>
-          <div className="relative z-10">
-            <p className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-1">Products</p>
-            <h3 className="text-5xl font-black text-brand-navy">{productsCount}</h3>
+
+          <div className="rounded-xl bg-white border border-brand-line p-6 sm:p-8 flex items-start justify-between shadow-xs">
+            <div>
+              <div className="font-mono text-xs uppercase tracking-wider text-brand-muted">
+                Staff Accounts
+              </div>
+              <div className="font-display text-4xl font-bold text-brand-navy mt-2">
+                {usersCount}
+              </div>
+            </div>
+            <div className="w-11 h-11 rounded-lg bg-brand-surface-alt text-brand-navy border border-brand-line flex items-center justify-center">
+              <Users size={22} />
+            </div>
           </div>
         </div>
 
-        {/* Users Card */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-8 flex flex-col relative overflow-hidden group hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/5 clip-honeycomb group-hover:scale-110 transition-transform duration-500"></div>
-          <div className="w-14 h-14 bg-blue-500 text-white rounded-2xl flex items-center justify-center shrink-0 mb-6 shadow-md relative z-10">
-            <Users size={28} />
-          </div>
-          <div className="relative z-10">
-            <p className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-1">Admin Users</p>
-            <h3 className="text-5xl font-black text-brand-navy">{usersCount}</h3>
-          </div>
-        </div>
-      </div>
+        <div>
+          <h2 className="font-mono text-xs uppercase tracking-widest text-brand-steel mb-5">
+            Common Tasks
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <Link
+              href="/admin/products/new"
+              className="rounded-xl bg-white border border-brand-line hover:border-brand-navy p-6 flex flex-col justify-between gap-4 transition-colors shadow-xs"
+            >
+              <div className="font-display font-bold text-lg text-brand-navy">
+                Add a New Product
+              </div>
+              <div className="text-xs text-brand-muted flex items-center justify-between">
+                <span>Upload photos &amp; features</span>
+                <ArrowUpRight size={15} className="text-brand-navy" />
+              </div>
+            </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-8 relative overflow-hidden">
-          <h3 className="text-xl font-bold text-brand-navy mb-6 flex items-center gap-2">
-            <Hexagon className="text-brand-sun" size={20} /> Quick Actions
-          </h3>
-          <div className="space-y-4">
-            <Link href="/admin/products/new" className="flex items-center justify-between w-full px-6 py-4 bg-gray-50 hover:bg-brand-sun/10 border border-gray-100 hover:border-brand-sun/30 rounded-2xl font-bold text-brand-navy transition-all group">
-              <span className="flex items-center gap-3"><Plus size={20} className="text-gray-400 group-hover:text-brand-sun transition-colors" /> Add New Product</span>
+            <Link
+              href="/admin/products/bulk"
+              className="rounded-xl bg-white border border-brand-line hover:border-brand-navy p-6 flex flex-col justify-between gap-4 transition-colors shadow-xs"
+            >
+              <div className="font-display font-bold text-lg text-brand-navy">
+                Bulk CSV Import
+              </div>
+              <div className="text-xs text-brand-muted flex items-center justify-between">
+                <span>Paste list &amp; attach photos</span>
+                <ArrowUpRight size={15} className="text-brand-navy" />
+              </div>
             </Link>
-            <Link href="/admin/categories/new" className="flex items-center justify-between w-full px-6 py-4 bg-gray-50 hover:bg-brand-sun/10 border border-gray-100 hover:border-brand-sun/30 rounded-2xl font-bold text-brand-navy transition-all group">
-              <span className="flex items-center gap-3"><Plus size={20} className="text-gray-400 group-hover:text-brand-sun transition-colors" /> Add New Category</span>
+
+            <Link
+              href="/admin/categories/new"
+              className="rounded-xl bg-white border border-brand-line hover:border-brand-navy p-6 flex flex-col justify-between gap-4 transition-colors shadow-xs"
+            >
+              <div className="font-display font-bold text-lg text-brand-navy">
+                Create Category
+              </div>
+              <div className="text-xs text-brand-muted flex items-center justify-between">
+                <span>Add a new product category</span>
+                <ArrowUpRight size={15} className="text-brand-navy" />
+              </div>
             </Link>
-            <Link href="/admin/settings" className="flex items-center justify-between w-full px-6 py-4 bg-gray-50 hover:bg-brand-sun/10 border border-gray-100 hover:border-brand-sun/30 rounded-2xl font-bold text-brand-navy transition-all group">
-              <span className="flex items-center gap-3"><Settings size={20} className="text-gray-400 group-hover:text-brand-sun transition-colors" /> Update Site Settings</span>
+
+            <Link
+              href="/admin/settings"
+              className="rounded-xl bg-white border border-brand-line hover:border-brand-navy p-6 flex flex-col justify-between gap-4 transition-colors shadow-xs"
+            >
+              <div className="font-display font-bold text-lg text-brand-navy flex items-center gap-2">
+                <Settings size={18} className="text-brand-sun-dark" />
+                <span>Site Contact Details</span>
+              </div>
+              <div className="text-xs text-brand-muted flex items-center justify-between">
+                <span>Phone, WhatsApp, email &amp; address</span>
+                <ArrowUpRight size={15} className="text-brand-navy" />
+              </div>
             </Link>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

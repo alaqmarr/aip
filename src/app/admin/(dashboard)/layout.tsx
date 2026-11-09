@@ -1,78 +1,119 @@
-import { getServerSession } from "next-auth/next"
-import { redirect } from "next/navigation"
-import Link from "next/link"
-import { Settings, Package, LayoutGrid, LogOut, ExternalLink, Hexagon } from "lucide-react"
+import type { Metadata } from "next";
+import { getServerSession } from "next-auth/next";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import {
+  Settings,
+  Package,
+  Layers,
+  LayoutGrid,
+  LogOut,
+  ExternalLink,
+  FileSpreadsheet,
+} from "lucide-react";
+
+export const metadata: Metadata = {
+  title: {
+    default: "Admin Console | Alfa Industrial Products",
+    template: "%s | AIP Admin",
+  },
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const session = await getServerSession()
+  const session = await getServerSession();
 
   if (!session) {
-    redirect("/admin/login")
+    redirect("/admin/login");
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen w-full bg-brand-surface flex flex-col lg:flex-row">
       {/* Sidebar */}
-      <aside className="w-72 bg-brand-navy text-white flex flex-col h-screen sticky top-0 shadow-2xl relative overflow-hidden z-20">
-        {/* Subtle background element */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-sun/5 clip-honeycomb blur-2xl -mt-32 -mr-32 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 clip-honeycomb blur-2xl -mb-32 -ml-32 pointer-events-none"></div>
-
-        <div className="p-8 border-b border-white/10 relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-brand-sun text-brand-navy flex items-center justify-center rounded-xl shadow-lg border border-brand-sun/50">
-              <Hexagon size={24} className="fill-brand-navy text-brand-navy" />
+      <aside className="w-full lg:w-68 shrink-0 bg-brand-navy text-white flex flex-col lg:h-screen lg:sticky lg:top-0 border-b lg:border-b-0 lg:border-r border-brand-line-dark">
+        <div className="p-6 border-b border-brand-line-dark flex items-center justify-between lg:block">
+          <Link href="/admin" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white p-1 flex items-center justify-center shrink-0">
+              <img
+                src="/logo.jpeg"
+                alt="AIP"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
-              <h2 className="text-xl font-black tracking-tight text-white">AIP <span className="text-brand-sun">ADMIN</span></h2>
+              <div className="font-display font-bold text-base tracking-tight text-white leading-none">
+                AIP CONSOLE
+              </div>
+              <div className="font-mono text-[11px] text-brand-sun mt-1 truncate max-w-[150px]">
+                {session.user?.name || session.user?.email}
+              </div>
             </div>
-          </div>
-          <p className="text-xs text-gray-400 font-medium pl-13">Welcome back, {session.user?.name}</p>
+          </Link>
         </div>
-        
-        <nav className="flex-1 p-6 space-y-2 relative z-10 overflow-y-auto">
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3.5 text-gray-300 hover:bg-white/10 hover:text-white rounded-xl transition-all duration-300 group font-medium">
-            <LayoutGrid size={20} className="group-hover:text-brand-sun transition-colors" />
-            <span>Dashboard</span>
+
+        <nav className="flex-1 p-4 flex lg:flex-col gap-1.5 overflow-x-auto">
+          <Link
+            href="/admin"
+            className="flex items-center gap-3 px-4 py-3 text-sm font-display font-medium text-blue-100 hover:bg-brand-navy-light hover:text-white transition-colors shrink-0"
+          >
+            <LayoutGrid size={18} className="text-brand-sun" />
+            <span>Overview</span>
           </Link>
-          <Link href="/admin/categories" className="flex items-center gap-3 px-4 py-3.5 text-gray-300 hover:bg-white/10 hover:text-white rounded-xl transition-all duration-300 group font-medium">
-            <LayoutGrid size={20} className="group-hover:text-brand-sun transition-colors" />
-            <span>Categories</span>
-          </Link>
-          <Link href="/admin/products" className="flex items-center gap-3 px-4 py-3.5 text-gray-300 hover:bg-white/10 hover:text-white rounded-xl transition-all duration-300 group font-medium">
-            <Package size={20} className="group-hover:text-brand-sun transition-colors" />
+          <Link
+            href="/admin/products"
+            className="flex items-center gap-3 px-4 py-3 text-sm font-display font-medium text-blue-100 hover:bg-brand-navy-light hover:text-white transition-colors shrink-0"
+          >
+            <Package size={18} className="text-brand-sun" />
             <span>Products</span>
           </Link>
-          <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3.5 text-gray-300 hover:bg-white/10 hover:text-white rounded-xl transition-all duration-300 group font-medium">
-            <Settings size={20} className="group-hover:text-brand-sun transition-colors" />
-            <span>Site Settings</span>
+          <Link
+            href="/admin/products/bulk"
+            className="flex items-center gap-3 px-4 py-3 text-sm font-display font-medium text-blue-100 hover:bg-brand-navy-light hover:text-white transition-colors shrink-0"
+          >
+            <FileSpreadsheet size={18} className="text-brand-sun" />
+            <span>Bulk Import</span>
+          </Link>
+          <Link
+            href="/admin/categories"
+            className="flex items-center gap-3 px-4 py-3 text-sm font-display font-medium text-blue-100 hover:bg-brand-navy-light hover:text-white transition-colors shrink-0"
+          >
+            <Layers size={18} className="text-brand-sun" />
+            <span>Categories</span>
+          </Link>
+          <Link
+            href="/admin/settings"
+            className="flex items-center gap-3 px-4 py-3 text-sm font-display font-medium text-blue-100 hover:bg-brand-navy-light hover:text-white transition-colors shrink-0"
+          >
+            <Settings size={18} className="text-brand-sun" />
+            <span>Contact &amp; Settings</span>
           </Link>
         </nav>
 
-        <div className="p-6 border-t border-white/10 space-y-2 relative z-10">
-          <Link href="/" target="_blank" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300 group font-medium">
-            <ExternalLink size={18} className="group-hover:text-brand-sun transition-colors" />
-            <span>View Public Site</span>
+        <div className="p-4 border-t border-brand-line-dark flex lg:flex-col gap-1.5">
+          <Link
+            href="/"
+            target="_blank"
+            className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-mono text-blue-200/80 hover:text-white hover:bg-brand-navy-mid transition-colors"
+          >
+            <ExternalLink size={15} className="text-brand-sun" />
+            <span>Open Public Site</span>
           </Link>
-          <Link href="/api/auth/signout" className="flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all duration-300 font-medium">
-            <LogOut size={18} />
-            <span>Logout</span>
+          <Link
+            href="/api/auth/signout"
+            className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-mono text-amber-300 hover:bg-brand-navy-mid transition-colors"
+          >
+            <LogOut size={15} />
+            <span>Sign Out</span>
           </Link>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto relative">
-        {/* Subtle grid pattern for the dashboard background */}
-        <div className="fixed inset-0 z-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-        <div className="relative z-10">
-          {children}
-        </div>
-      </main>
+      {/* Main Workspace (Full Remaining Width) */}
+      <main className="flex-1 w-full min-w-0">{children}</main>
     </div>
-  )
+  );
 }
